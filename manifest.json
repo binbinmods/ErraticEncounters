@@ -1,0 +1,7 @@
+{
+  "name": "Mod_Name_To_Replace",
+  "version_number": "1.0.0",
+  "website_url": "https://github.com/binbinmods/ErraticEncounters",
+  "description": "A mod that DescriptionToReplace",
+  "dependencies": ["BepInEx-BepInExPack_AcrossTheObelisk-5.4.23"]
+}
