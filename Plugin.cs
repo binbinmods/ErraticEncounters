@@ -46,15 +46,19 @@ namespace ErraticEncounters
         // It automatically creates the appropriate configs.
 
 
-        public static ConfigEntry<bool> EnableMod { get; set; }
+        public static ConfigEntry<bool> CompleteRandomization { get; set; }
         public static ConfigEntry<bool> EnableDebugging { get; set; }
-        public static ConfigEntry<bool> EnableDLCMode { get; set; }
-        public static ConfigEntry<bool> DisablePositioning { get; set; }
-        // public static ConfigEntry<bool> EnableChampions { get; set; }
-        public static ConfigEntry<bool> EnableBossesInHallway { get; set; }
-        public static ConfigEntry<bool> EnableBossRandomization { get; set; }
-        public static ConfigEntry<bool> EnableEventCombatRandomization { get; set; }
-        public static ConfigEntry<bool> IncludeOCBosses { get; set; }
+        public static ConfigEntry<bool> EnableDLCMode { get; set; } // DONE
+        public static ConfigEntry<bool> AllowDuplicates { get; set; } // DONE
+        public static ConfigEntry<bool> DisablePositioning { get; set; } // DONE
+        public static ConfigEntry<bool> AddChampionsToPool { get; set; } // DONE
+        public static ConfigEntry<bool> AddBossesToPool { get; set; } // DONE
+        public static ConfigEntry<bool> RandomizeBosses { get; set; } // DONE
+        public static ConfigEntry<bool> FairlyRandomizeBosses { get; set; } // TODO
+        // public static ConfigEntry<bool> IncludeOCBosses { get; set; }
+        public static ConfigEntry<bool> RandomizeEventCombat { get; set; } // DONE
+        public static ConfigEntry<bool> EnableHardEnemiesOnly { get; set; } // TODO
+
 
         public static string PluginName;
         public static string PluginVersion;
@@ -75,23 +79,25 @@ namespace ErraticEncounters
 
             // Sets the title, default values, and descriptions
             string modName = "ErraticEncounters";
-            EnableMod = Config.Bind(new ConfigDefinition(modName, "EnableMod"), true, new ConfigDescription("Enables the mod. If false, the mod will not work then next time you load the game."));
+            CompleteRandomization = Config.Bind(new ConfigDefinition(modName, "EnableMod"), true, new ConfigDescription("Enables the mod. This completely randomizes the enemies in all non-event combats."));
             EnableDebugging = Config.Bind(new ConfigDefinition(modName, "EnableDebugging"), false, new ConfigDescription("Enables the debugging"));
             EnableDLCMode = Config.Bind(new ConfigDefinition(modName, "EnableDLCMode"), false, new ConfigDescription("Enables DLC mode, meaning only DLC enemies will spawn"));
-            // EnableChampions = Config.Bind(new ConfigDefinition(modName, "EnableChampions"), true, new ConfigDescription("Makes all combats have a champion enemy or boss"));
+            AllowDuplicates = Config.Bind(new ConfigDefinition(modName, "AllowDuplicates"), true, new ConfigDescription("Enables duplicates of the same enemy to spawn in the same combat"));
+            AddChampionsToPool = Config.Bind(new ConfigDefinition(modName, "EnableChampions"), true, new ConfigDescription("Makes all combats have a champion enemy or boss"));
+            AddBossesToPool = Config.Bind(new ConfigDefinition(modName, "EnableBossesInHallway"), false, new ConfigDescription("If true, bosses can spawn in hallway fights"));
             DisablePositioning = Config.Bind(new ConfigDefinition(modName, "DisablePositioning"), true, new ConfigDescription("Disables the positioning of enemies. "));
-            EnableBossRandomization = Config.Bind(new ConfigDefinition(modName, "EnableBossRandomization"), false, new ConfigDescription("Also Randomizes bosses (to ones of the same difficulty)"));
-            EnableBossesInHallway = Config.Bind(new ConfigDefinition(modName, "EnableBossesInHallway"), false, new ConfigDescription("If true, bosses can spawn in hallway fights"));
-            EnableEventCombatRandomization = Config.Bind(new ConfigDefinition(modName, "EnableEventCombatRandomization"), true, new ConfigDescription("Enables the event combat randomization"));
-            IncludeOCBosses = Config.Bind(new ConfigDefinition(modName, "IncludeOCBosses"), false, new ConfigDescription("If true, OC bosses be added to the pool of enemies"));
-
+            RandomizeEventCombat = Config.Bind(new ConfigDefinition(modName, "RandomizeEvents"), true, new ConfigDescription("Enables the randomization of non-boss event combats"));
+            RandomizeBosses = Config.Bind(new ConfigDefinition(modName, "RandomizeBosses"), false, new ConfigDescription("Also Randomizes bosses (to ones of any difficulty)"));
+            FairlyRandomizeBosses = Config.Bind(new ConfigDefinition(modName, "FairlyRandomizeBosses"), false, new ConfigDescription("Randomizes bosses to ones of any difficulty, but not the same difficulty"));
+            // IncludeOCBosses = Config.Bind(new ConfigDefinition(modName, "IncludeOCBosses"), false, new ConfigDescription("If true, OC bosses be added to the pool of enemies"));
+            // EnableHardEnemiesOnly = Config.Bind(new ConfigDefinition(modName, "EnableHardEnemiesOnly"), false, new ConfigDescription("If true, only hard enemies will spawn"));
 
 
             // apply patches, this functionally runs all the code for Harmony, running your mod
             PluginName = PluginInfo.PLUGIN_NAME;
             PluginVersion = PluginInfo.PLUGIN_VERSION;
             PluginGUID = PluginInfo.PLUGIN_GUID;
-            if (EnableMod.Value)
+            if (CompleteRandomization.Value)
             {
                 if (EssentialsCompatibility.Enabled)
                     EssentialsCompatibility.EssentialsRegister();
@@ -102,7 +108,6 @@ namespace ErraticEncounters
         }
 
 
-        // These are some functions to make debugging a tiny bit easier.
         internal static void LogDebug(string msg)
         {
             if (EnableDebugging.Value)
